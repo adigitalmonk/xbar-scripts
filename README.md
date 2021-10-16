@@ -43,7 +43,7 @@ The xbar variables are:
 
 - GitHub PAT
 - Repo List (A comma separated list of repos to list the PRs for)
-  - E.g., `adigitalmonk/xbar_scripts,matryer/xbar`
+  - E.g., `adigitalmonk/xbar-scripts,matryer/xbar`
 
 ## Droplet Monitor
 
@@ -64,14 +64,14 @@ The xbar variables are:
 You can use these script outside of xbar as well. When running the script,
 ensure that the environment variable `VAR_GITHUB_PAT` is set.
 
-You can either run it via Deno or directly.
+You can run it via Deno.
 
 ```
 > deno run --allow-net --allow-env github.ts
 > deno run --allow-net --allow-env droplets.ts
 ```
 
-or directly on the command line.
+Or directly on the command line.
 
 ```
 > ./github.ts
