@@ -1,0 +1,6 @@
+# Variables for droplets.ts
+export VAR_DO_TOKEN=<YOUR DO TOKEN>
+
+# Variables for github.ts
+export VAR_GITHUB_PAT=<YOUR PAT>
+export VAR_GITHUB_REPOS=adigitalmonk/xbar_scripts
