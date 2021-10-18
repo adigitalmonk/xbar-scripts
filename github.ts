@@ -9,20 +9,21 @@
  * <xbar.dependencies>deno</xbar.dependencies>
  *
  * <xbar.var>string(VAR_GITHUB_PAT=""): Your GitHub PAT.</xbar.var>
+ * <xbar.var>string(VAR_GITHUB_TITLE="PR Monitor?"): Title for this plugin</xbar.var>
  * <xbar.var>string(VAR_GITHUB_REPOS=""): GitHub Repos to check PRs.</xbar.var>
  */
 
 const padToken = Deno.env.get("VAR_GITHUB_PAT") as string;
 const githubRepos = Deno.env.get("VAR_GITHUB_REPOS") as string;
 
-if (padToken?.length < 1) {
+if (!padToken || padToken?.length < 1) {
   console.log("PR Monitor");
   console.log("---");
   console.log("No GitHub PAT, please configure in the plugin settings.");
   Deno.exit(0);
 }
 
-if (githubRepos?.length < 1) {
+if (!githubRepos || githubRepos?.length < 1) {
   console.log("PR Monitor");
   console.log("---");
   console.log(
@@ -101,7 +102,7 @@ const truncateTitle = (title: string) =>
     ? title.slice(0, TITLE_LEN_LIMIT) + "..."
     : title;
 
-console.log(`PR Monitor (${responseBody.total_count})\n---`);
+console.log(`${Deno.env.get('VAR_GITHUB_TITLE')} (${responseBody.total_count})\n---`);
 for (const [repo, repoPRs] of Object.entries(prs)) {
   console.log(repo);
   for (const repoPR of repoPRs) {
