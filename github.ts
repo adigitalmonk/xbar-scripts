@@ -104,7 +104,7 @@ const truncateTitle = (title: string) =>
 
 console.log(`${Deno.env.get('VAR_GITHUB_TITLE')} (${responseBody.total_count})\n---`);
 for (const [repo, repoPRs] of Object.entries(prs)) {
-  console.log(repo);
+  console.log(`(${repoPRs.length}) ${repo}`);
   for (const repoPR of repoPRs) {
     const titleColor = repoPR.draft ? "lightgray" : "white";
     console.log(
