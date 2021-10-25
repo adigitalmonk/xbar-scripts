@@ -62,6 +62,7 @@ interface RepoItem {
   labels: Label[];
 }
 
+// TODO: Build the initial repoPRs key structure using this repo list.
 const repoList = githubRepos.trim().split(",");
 const query = `state:open ${
   repoList.map((repo) => `repo:${repo}`).join(" ")
@@ -89,8 +90,10 @@ const responseBody: SearchResponse = await res.json();
 const prs: Record<string, RepoItem[]> = {};
 for (const repoItem of responseBody.items) {
   const repo = repoItem.url.split("/").splice(4, 2).join("/");
-  prs[repo] = prs[repo] || [];
-  prs[repo].push(repoItem);
+  const repoUrl = repoItem.html_url.split("/").splice(0, 5).join("/");
+  const repoKey = repo + "|" + repoUrl;
+  prs[repoKey] = prs[repoKey] || [];
+  prs[repoKey].push(repoItem);
 }
 
 const formatLabel = (label: Label) =>
@@ -102,9 +105,12 @@ const truncateTitle = (title: string) =>
     ? title.slice(0, TITLE_LEN_LIMIT) + "..."
     : title;
 
-console.log(`${Deno.env.get('VAR_GITHUB_TITLE')} (${responseBody.total_count})\n---`);
-for (const [repo, repoPRs] of Object.entries(prs)) {
-  console.log(`(${repoPRs.length}) ${repo}`);
+console.log(
+  `${Deno.env.get("VAR_GITHUB_TITLE")} (${responseBody.total_count})\n---`,
+);
+for (const [repoKey, repoPRs] of Object.entries(prs)) {
+  const [repo, repoUrl] = repoKey.split("|");
+  console.log(`(${repoPRs.length}) ${repo} | href=${repoUrl}`);
   for (const repoPR of repoPRs) {
     const titleColor = repoPR.draft ? "lightgray" : "white";
     console.log(
