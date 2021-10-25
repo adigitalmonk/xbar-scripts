@@ -11,37 +11,41 @@
  * <xbar.var>string(VAR_SITES=""): Comma-separated list of sites to check.</xbar.var>
  */
 
-
 const siteList = Deno.env.get("VAR_SITES") as string;
 
 if (!siteList || siteList.length <= 0) {
-    console.log("Site Monitor\n---\nMissing 'VAR_SITES' setting");
-    Deno.exit();
+  console.log("Site Monitor\n---\nMissing 'VAR_SITES' setting");
+  Deno.exit();
 }
 
 const sites = siteList.split(",");
 
 function normalizeSite(site: string): string {
-    if (site.substr(0, 4) != 'http') {
-        return 'https://' + site
-    }
-    return site;
+  if (site.substr(0, 4) != "http") {
+    return "https://" + site;
+  }
+  return site;
 }
 
-const results: Record<string, boolean> = {};
-let errors = 0;
+const greens: string[] = [];
+const reds: string[] = [];
 for (const site of sites) {
-    const result = await fetch(normalizeSite(site)).catch(_err => ({ status: 400 }));
-    if (result.status !== 200) {
-        errors += 1;
-        results[site] = false;
-    } else {
-        results[site] = true;
-    }
+  const result = await fetch(normalizeSite(site)).catch((_err) => ({
+    status: 400,
+  }));
+
+  if (result.status < 300 && result.status >= 200) {
+    greens.push(site);
+  } else {
+    reds.push(site);
+  }
 }
 
-console.log(`Sites ${new Array(errors).fill("!").join("")}`);
+console.log(`Sites ${new Array(reds.length).fill("!").join("")}`);
 console.log("---");
-for (const [site, result] of Object.entries(results)) {
-    console.log(`${site} | color=${result ? 'green' : 'red'}`)
+for (const redSite of reds) {
+  console.log(`${redSite} | color=red`);
+}
+for (const greenSite of greens) {
+  console.log(`${greenSite} | color=green`);
 }
